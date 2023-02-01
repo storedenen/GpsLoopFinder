@@ -9,4 +9,6 @@ public class TrackPoint
     public double Elevation { get; set; }
 
     public double Distance { get; set; }
+    
+    public double Elapsed { get; set; }
 }

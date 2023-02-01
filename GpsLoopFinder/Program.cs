@@ -19,7 +19,8 @@ foreach (var feature in layer)
             {
                 var distance = CalculateDistance(lastPoint.X, lastPoint.Y, point.X, point.Y);
                 var speed = CalcualteSpeed(distance, 1d) * 3.6d;
-                Console.WriteLine($"Longitude: {point.X}, Latitude: {point.Y}, Distance:{distance} M, Speed: {speed} KM/H");
+                var bearing = CalculateBearing(lastPoint.X, lastPoint.Y, point.X, point.Y);
+                Console.WriteLine($"Longitude: {point.X}, Latitude: {point.Y}, Distance:{distance} M, Speed: {speed} KM/H, Bearing: {bearing}");
                 lastPoint = point;
             }
         }
@@ -46,6 +47,15 @@ double CalculateDistance(double startLon, double startLat, double endLon, double
     result = earthRadius * c;
 
     return result;
+}
+
+double CalculateBearing(double startLon, double startLat, double endLon, double endLat)
+{
+    var y = Math.Sin(endLon - startLon) * Math.Cos(endLat);
+    var x = Math.Cos(startLat) * Math.Sin(endLat) - 
+            Math.Sin(startLat) * Math.Cos(endLat) * Math.Cos(endLon - startLon);
+    var angle = Math.Atan2(y, x);
+    return (angle * 180 / Math.PI) % 360;
 }
 
 double CalcualteSpeed(double distanceInMeter, double timeInSeconds)
