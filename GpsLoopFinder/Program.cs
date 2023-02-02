@@ -78,6 +78,61 @@ double ToRadians(double angle)
     return Math.PI * angle / 180.0;
 }
 
+
+double EarthRadius = 6371.0;
+double Radian = Math.PI / 180.0;
+
+
+public class Coordinate
+{
+    public double Latitude { get; set; }
+    public double Longitude { get; set; }
+
+    public Coordinate(double latitude, double longitude)
+    {
+        Latitude = latitude;
+        Longitude = longitude;
+    }
+}
+
+double Distance(Coordinate coord1, Coordinate coord2)
+{
+    double latitude1 = coord1.Latitude * Radian;
+    double latitude2 = coord2.Latitude * Radian;
+    double longitude1 = coord1.Longitude * Radian;
+    double longitude2 = coord2.Longitude * Radian;
+    double deltaLatitude = latitude2 - latitude1;
+    double deltaLongitude = longitude2 - longitude1;
+    double a = Math.Sin(deltaLatitude / 2) * Math.Sin(deltaLatitude / 2) +
+               Math.Cos(latitude1) * Math.Cos(latitude2) *
+               Math.Sin(deltaLongitude / 2) * Math.Sin(deltaLongitude / 2);
+    double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+    double distance = EarthRadius * c;
+
+    return distance;
+}
+
+static Coordinate Midpoint(Coordinate coord1, Coordinate coord2)
+{
+    double latitude1 = coord1.Latitude * Radian;
+    double latitude2 = coord2.Latitude * Radian;
+    double longitude1 = coord1.Longitude * Radian;
+    double longitude2 = coord2.Longitude * Radian;
+    double deltaLongitude = longitude2 - longitude1;
+
+    double x = Math.Cos(latitude2) * Math.Cos(deltaLongitude);
+    double y = Math.Cos(latitude2) * Math.Sin(deltaLongitude);
+
+    double latitude3 = Math.Atan2(
+        Math.Sin(latitude1) + Math.Sin(latitude2),
+        Math.Sqrt(
+            (Math.Cos(latitude1) + x) *
+            (Math.Cos(latitude1) + x) + y * y));
+    double longitude3 = longitude1 + Math.Atan2(y, Math.Cos(latitude1) + x);
+
+    return new Coordinate(latitude3 / Radian, longitude3 / Radian);
+}
+
 double ToDegrees(double radians)
 {
     return radians * 180 / Math.PI;
